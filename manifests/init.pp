@@ -27,14 +27,14 @@ class mwf::server ($site_url, $site_assets_url, $site_nonmobile_url = false) {
       require => Package['git']
    }
 
-   exec {"/home/mwf/install/install.sh":
+   exec {"bash /home/mwf/install/install.sh":
       alias => "install",
       refreshonly => true,
       require => Exec['git_clone'],
       notify => Exec['install_wurfl']
    }
 
-   exec {"/home/mwf/install/install-wurfl-api.sh":
+   exec {"bash /home/mwf/install/install-wurfl-api.sh":
       alias => "install_wurfl",
       refreshonly => true,
       require => Exec['install']
