@@ -23,21 +23,7 @@ class mwf::server ($site_url, $site_assets_url, $site_nonmobile_url = false) {
       alias => "git_clone",
       creates => "/home/mwf",
       cwd => "/home",
-      notify => Exec['install'],
       require => Package['git']
-   }
-
-   exec {"/bin/bash /home/mwf/install/install.sh":
-      alias => "install",
-      refreshonly => true,
-      require => Exec['git_clone'],
-      notify => Exec['install_wurfl']
-   }
-
-   exec {"/bin/bash /home/mwf/install/install-wurfl-api.sh":
-      alias => "install_wurfl",
-      refreshonly => true,
-      require => Exec['install']
    }
 
    file {"/var/www/html/mobile":
@@ -48,6 +34,71 @@ class mwf::server ($site_url, $site_assets_url, $site_nonmobile_url = false) {
    file {"/home/mwf/config/global.php":
       ensure => present,
       content => template("mwf/global.php.erb"),
-      require => Exec['install']
+      require => Exec['git_clone']
    }
+
+   file {"/var/mobile":
+      ensure => directory
+   }
+
+   file {"/var/mobile/cache":
+      ensure => directory
+   }
+
+   file {"/var/mobile/cache/img":
+      ensure => directory,
+      mode => 0755,
+      group => "apache",
+      owner => "apache"
+   }
+
+   file {"/var/mobile/cache/wurfl":
+      ensure => directory,
+      mode => 0755,
+      group => "apache",
+      owner => "apache"
+   }
+
+   file {"/var/mobile/cache/simplepie":
+      ensure => directory,
+      mode => 0755,
+      group => "apache",
+      owner => "apache"
+   }
+
+   file {"/var/mobile/wurfl":
+      ensure => directory
+   }
+   
+   file {"/var/mobile/wurfl/wurfl-config.xml":
+      ensure => "/home/mwf/install/components/wurfl-config.xml"
+   }
+
+   file {"/var/mobile/wurfl/wurfl-web_browsers_patch.xml":
+      ensure => "/home/mwf/install/components/wurfl-web_browsers_patch.xml"
+   }
+
+   file {"/home/mwf/install/components/wurfl-2.1.1.xml.gz":
+      ensure => present,
+      source => "http://mwf.ucla.edu/wurfl-2.1.1.xml.gz",
+      notify => Exec['decompress_metadata']
+   }
+
+   exec {"/usr/bin/gunzip -c /home/mwf/install/components/wurfl-2.1.1.xml.gz > /var/mobile/wurfl/wurfl.xml":
+      creates => "/var/mobile/wurfl/wurfl.xml",
+      alias => "decompress_metadata"
+   }
+
+   file {"/home/mwf/install/components/wurfl-php-api-1.2.1.tgz":
+      ensure => present,
+      source => "http://mwf.ucla.edu/wurfl-php-api-1.2.1.tgz",
+      notify => Exec['decompress_api']
+   }
+
+   exec {"/bin/tar xvfz /home/mwf/install/components/wurfl-php-api-1.2.1.tgz":
+      cwd => "/var/mobile/wurfl",
+      creates => "/var/mobile/wurfl/api",
+      alias => 'decompress_api'
+   }
+
 }
