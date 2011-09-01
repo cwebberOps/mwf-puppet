@@ -78,9 +78,9 @@ class mwf::server ($site_url, $site_assets_url, $site_nonmobile_url = false) {
       ensure => "/home/mwf/install/components/wurfl-web_browsers_patch.xml"
    }
 
-   file {"/home/mwf/install/components/wurfl-2.1.1.xml.gz":
-      ensure => present,
-      source => "http://mwf.ucla.edu/wurfl-2.1.1.xml.gz",
+   exec { "/usr/bin/wget http://mwf.ucla.edu/wurfl-2.1.1.xml.gz":
+      cwd => "/home/mwf/install/components",
+      creates => "/home/mwf/install/components/wurfl-2.1.1.xml.gz",
       notify => Exec['decompress_metadata']
    }
 
@@ -89,9 +89,9 @@ class mwf::server ($site_url, $site_assets_url, $site_nonmobile_url = false) {
       alias => "decompress_metadata"
    }
 
-   file {"/home/mwf/install/components/wurfl-php-api-1.2.1.tgz":
-      ensure => present,
-      source => "http://mwf.ucla.edu/wurfl-php-api-1.2.1.tgz",
+   exec{ "/usr/bin/wget http://mwf.ucla.edu/wurfl-php-api-1.2.1.tgz":
+      cwd => "/home/mwf/install/components",
+      creates => "/home/mwf/install/components/wurfl-php-api-1.2.1.tgz",
       notify => Exec['decompress_api']
    }
 
