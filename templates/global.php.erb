@@ -26,8 +26,8 @@ require_once(dirname(dirname(__FILE__)).'/root/assets/lib/config.class.php');
  * DO NOT INCLUDE A TRAILING SLASH
  */
 
-Config::set('global', 'site_url', '<% site_url %>');
-Config::set('global', 'site_assets_url', '<% site_assets_url %>');
+Config::set('global', 'site_url', '<%= site_url %>');
+Config::set('global', 'site_assets_url', '<%= site_assets_url %>');
 Config::set('global', 'site_nonmobile_url', false);
 Config::set('global', 'full_site_url', false);
 Config::set('global', 'help_site_url', false);
